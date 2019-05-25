@@ -8,9 +8,6 @@ import sys
 from PIL import Image
 
 
-# TODO
-# - break into smaller funcs
-
 GRAYSCALE_PATH = 'grayscale.png'
 
 
@@ -71,9 +68,7 @@ def convert_to_grayscale(image, save_grayscale):
 
 
 def image_to_ascii(image):
-    output_rows = (
-        row_to_ascii(image, row) for row in range(image.height)
-    )
+    output_rows = (row_to_ascii(image, row) for row in range(image.height))
     return '\n'.join(output_rows) + '\n'
 
 
