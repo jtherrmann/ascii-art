@@ -4,8 +4,6 @@ import argparse
 import math
 import os
 import sys
-import time
-from datetime import datetime
 
 from PIL import Image
 
@@ -89,9 +87,6 @@ if __name__ == '__main__':
     image = resize_image(image, args.max_width)
     image = convert_to_grayscale(image, args.save_grayscale)
 
-    print('start: {}'.format(datetime.now().strftime('%H:%M:%S')))
-    t1 = time.time()
-
     output_rows = []
     for y in range(image.height):
         output_row = ''
@@ -100,11 +95,6 @@ if __name__ == '__main__':
             output_row += pixel_to_ascii(pixel, args.source_str)
         output_rows.append(output_row)
     output = '\n'.join(output_rows) + '\n'
-
-    t2 = time.time()
-    print('end: {}\n'.format(datetime.now().strftime('%H:%M:%S')))
-    total_time = round((t2 - t1) * 1000)
-    print('time: {} ms'.format(total_time))
 
     with open(args.output_path, 'w+') as output_file:
         output_file.write(output)
