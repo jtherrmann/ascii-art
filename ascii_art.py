@@ -10,26 +10,17 @@ from datetime import datetime
 from PIL import Image
 
 
-# started with example string from
-# https://robertheaton.com/2018/06/12/programming-projects-for-advanced-beginners-ascii-art/
-#
-# CHARS = ' `^",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$'
-
-# complete printable ascii:
-#
-#  !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-
-# experimenting:
-CHARS = ' .,:;/(@$#'
-
-SCALE_FACTOR = len(CHARS) / 256
+# TODO
+# - do something with saved resized/grayscale image
+# - add test for single-char kirby (chars = ' .')
+# - break into smaller funcs
 
 
-def pixel_to_ascii(pixel):
+def pixel_to_ascii(pixel, chars):
     assert 0 <= pixel <= 255
-    scaled_pixel = math.floor(pixel * SCALE_FACTOR)
-
-    return CHARS[scaled_pixel]
+    scale_factor = len(chars) / 256
+    scaled_pixel = math.floor(pixel * scale_factor)
+    return chars[scaled_pixel]
 
 
 def parse_args():
@@ -43,9 +34,21 @@ def parse_args():
     parser.add_argument(
         '-o', '--output-path',
         default='output.txt',
-        help='path to the output file (default: %(default)s)'
+        help=add_default('path to the output file')
+    )
+    parser.add_argument(
+        '-s', '--source-str',
+        default=' .:',
+        help=add_default(
+            'string of chars to use for the output, ordered from darkest to '
+            'lightest'
+        )
     )
     return parser.parse_args()
+
+
+def add_default(help_str):
+        return help_str + " (default: '%(default)s')"
 
 
 def check_image_path(path):
@@ -80,7 +83,7 @@ if __name__ == '__main__':
         output_row = ''
         for x in range(image.width):
             pixel = image.getpixel((x, y))
-            output_row += pixel_to_ascii(pixel)
+            output_row += pixel_to_ascii(pixel, args.source_str)
         output_rows.append(output_row)
     output = '\n'.join(output_rows) + '\n'
 
