@@ -70,25 +70,29 @@ def convert_to_grayscale(image, save_grayscale):
     return image
 
 
-def image_to_ascii(image, source_str):
+def image_to_ascii(image):
     output_rows = (
-        row_to_ascii(image, row, source_str) for row in range(image.height)
+        row_to_ascii(image, row) for row in range(image.height)
     )
     return '\n'.join(output_rows) + '\n'
 
 
-def row_to_ascii(image, row, source_str):
+def row_to_ascii(image, row):
     return ''.join(
-        pixel_to_ascii(image.getpixel((col, row)), source_str)
+        pixel_to_ascii(image.getpixel((col, row)))
         for col in range(image.width)
     )
 
 
-def pixel_to_ascii(pixel, source_str):
-    assert 0 <= pixel <= 255
+def pixel_to_ascii_func(source_str):
     scale_factor = len(source_str) / 256
-    scaled_pixel = math.floor(pixel * scale_factor)
-    return source_str[scaled_pixel]
+
+    def func(pixel):
+        assert 0 <= pixel <= 255
+        scaled_pixel = math.floor(pixel * scale_factor)
+        return source_str[scaled_pixel]
+
+    return func
 
 
 if __name__ == '__main__':
@@ -97,10 +101,13 @@ if __name__ == '__main__':
 
     args = parse_args()
 
+    global pixel_to_ascii
+    pixel_to_ascii = pixel_to_ascii_func(args.source_str)
+
     image = Image.open(args.image_path)
     image = resize_image(image, args.max_width)
     image = convert_to_grayscale(image, args.save_grayscale)
 
-    output = image_to_ascii(image, args.source_str)
+    output = image_to_ascii(image)
     with open(args.output_path, 'w+') as output_file:
         output_file.write(output)
