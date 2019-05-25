@@ -14,13 +14,6 @@ from PIL import Image
 GRAYSCALE_PATH = 'grayscale.png'
 
 
-def pixel_to_ascii(pixel, chars):
-    assert 0 <= pixel <= 255
-    scale_factor = len(chars) / 256
-    scaled_pixel = math.floor(pixel * scale_factor)
-    return chars[scaled_pixel]
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -77,6 +70,24 @@ def convert_to_grayscale(image, save_grayscale):
     return image
 
 
+def convert_to_ascii(image, source_str):
+    output_rows = []
+    for y in range(image.height):
+        output_row = ''
+        for x in range(image.width):
+            pixel = image.getpixel((x, y))
+            output_row += pixel_to_ascii(pixel, source_str)
+        output_rows.append(output_row)
+    return '\n'.join(output_rows) + '\n'
+
+
+def pixel_to_ascii(pixel, source_str):
+    assert 0 <= pixel <= 255
+    scale_factor = len(source_str) / 256
+    scaled_pixel = math.floor(pixel * scale_factor)
+    return source_str[scaled_pixel]
+
+
 if __name__ == '__main__':
     version = sys.version_info
     assert (version.major, version.minor, version.micro) >= (3, 5, 3)
@@ -87,14 +98,6 @@ if __name__ == '__main__':
     image = resize_image(image, args.max_width)
     image = convert_to_grayscale(image, args.save_grayscale)
 
-    output_rows = []
-    for y in range(image.height):
-        output_row = ''
-        for x in range(image.width):
-            pixel = image.getpixel((x, y))
-            output_row += pixel_to_ascii(pixel, args.source_str)
-        output_rows.append(output_row)
-    output = '\n'.join(output_rows) + '\n'
-
+    output = convert_to_ascii(image, args.source_str)
     with open(args.output_path, 'w+') as output_file:
         output_file.write(output)
