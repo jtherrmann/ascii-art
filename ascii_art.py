@@ -64,6 +64,21 @@ def check_image_path(path):
     return path
 
 
+def resize_image(image, max_width):
+    if image.width > max_width:
+        ratio = max_width / image.width
+        new_height = round(ratio * image.height)
+        return image.resize((max_width, new_height))
+    return image
+
+
+def convert_to_grayscale(image, save_grayscale):
+    image = image.convert('L')
+    if save_grayscale:
+        image.save(GRAYSCALE_PATH, 'PNG')
+    return image
+
+
 if __name__ == '__main__':
     version = sys.version_info
     assert (version.major, version.minor, version.micro) >= (3, 5, 3)
@@ -71,14 +86,8 @@ if __name__ == '__main__':
     args = parse_args()
 
     image = Image.open(args.image_path)
-    if image.width > args.max_width:
-        ratio = args.max_width / image.width
-        new_height = round(ratio * image.height)
-        image = image.resize((args.max_width, new_height))
-
-    image = image.convert('L')  # convert to grayscale
-    if args.save_grayscale:
-        image.save(GRAYSCALE_PATH, 'PNG')
+    image = resize_image(image, args.max_width)
+    image = convert_to_grayscale(image, args.save_grayscale)
 
     print('start: {}'.format(datetime.now().strftime('%H:%M:%S')))
     t1 = time.time()
