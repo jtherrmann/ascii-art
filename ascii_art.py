@@ -11,9 +11,9 @@ from PIL import Image
 
 
 # TODO
-# - do something with saved resized/grayscale image
-# - add test for single-char kirby (chars = ' .')
 # - break into smaller funcs
+
+GRAYSCALE_PATH = 'grayscale.png'
 
 
 def pixel_to_ascii(pixel, chars):
@@ -44,6 +44,13 @@ def parse_args():
             'lightest'
         )
     )
+    parser.add_argument(
+        '-g', '--save-grayscale',
+        action='store_true',
+        help="save the intermediate grayscale image as '{}'".format(
+            GRAYSCALE_PATH
+        )
+    )
     return parser.parse_args()
 
 
@@ -70,10 +77,8 @@ if __name__ == '__main__':
         image = image.resize((args.max_width, new_height))
 
     image = image.convert('L')  # convert to grayscale
-    grayscale_path = os.path.join(
-        os.path.dirname(args.image_path), 'grayscale.png'
-    )
-    image.save(grayscale_path, 'PNG')  # save for debugging
+    if args.save_grayscale:
+        image.save(GRAYSCALE_PATH, 'PNG')
 
     print('start: {}'.format(datetime.now().strftime('%H:%M:%S')))
     t1 = time.time()
