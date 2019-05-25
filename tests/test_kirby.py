@@ -39,3 +39,23 @@ class KirbyTestCase(unittest.TestCase):
             saved_output = saved_output_file.read()
 
         self.assertEqual(output, saved_output)
+
+    def test_minimal_kirby(self):
+        saved_output_path = os.path.join(self._tests_dir, 'minimal-kirby.txt')
+        assert os.path.isfile(saved_output_path)
+
+        subprocess.check_call(
+            ('python3', 'ascii_art.py',
+             self._image_path,
+             '50',
+             '-o', self._output_path,
+             '-s', ' .')
+        )
+
+        with open(self._output_path, 'rb') as output_file:
+            output = output_file.read()
+
+        with open(saved_output_path, 'rb') as saved_output_file:
+            saved_output = saved_output_file.read()
+
+        self.assertEqual(output, saved_output)
