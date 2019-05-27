@@ -52,19 +52,15 @@ def check_image_path(path):
     return path
 
 
-def resize_image(image, max_width):
+def get_image(image_path, max_width):
+    image = Image.open(args.image_path)
+
     if image.width > max_width:
         ratio = max_width / image.width
         new_height = round(ratio * image.height)
-        return image.resize((max_width, new_height))
-    return image
+        image = image.resize((max_width, new_height))
 
-
-def convert_to_grayscale(image, save_grayscale):
-    image = image.convert('L')
-    if save_grayscale:
-        image.save(GRAYSCALE_PATH, 'PNG')
-    return image
+    return image.convert('L')  # convert to grayscale
 
 
 def image_to_ascii(image):
@@ -99,9 +95,9 @@ if __name__ == '__main__':
     global pixel_to_ascii
     pixel_to_ascii = pixel_to_ascii_func(args.source_str)
 
-    image = Image.open(args.image_path)
-    image = resize_image(image, args.max_width)
-    image = convert_to_grayscale(image, args.save_grayscale)
+    image = get_image(args.image_path, args.max_width)
+    if args.save_grayscale:
+        image.save(GRAYSCALE_PATH, 'PNG')
 
     output = image_to_ascii(image)
     with open(args.output_path, 'w+') as output_file:
