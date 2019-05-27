@@ -19,11 +19,7 @@ def parse_args():
     parser.add_argument(
         'max_width', type=int, help='maximum width for the output'
     )
-    parser.add_argument(
-        '-o', '--output-path',
-        default='output.txt',
-        help=add_default('path to the output file')
-    )
+    parser.add_argument('-o', '--output-path', help='path to the output file')
     parser.add_argument(
         '-s', '--source-str',
         default=' .:',
@@ -100,5 +96,10 @@ if __name__ == '__main__':
         image.save(GRAYSCALE_PATH, 'PNG')
 
     output = image_to_ascii(image)
-    with open(args.output_path, 'w+') as output_file:
+
+    output_path = (
+        os.path.splitext(os.path.basename(args.image_path))[0] + '.txt'
+    ) if args.output_path is None else args.output_path
+
+    with open(output_path, 'w+') as output_file:
         output_file.write(output)
