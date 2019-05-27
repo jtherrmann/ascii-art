@@ -82,6 +82,10 @@ def pixel_to_ascii_func(source_str):
     return func
 
 
+def get_metadata(max_width, source_str):
+    return '{}\n{}\n'.format(max_width, source_str)
+
+
 if __name__ == '__main__':
     version = sys.version_info
     assert (version.major, version.minor, version.micro) >= (3, 5, 3)
@@ -104,6 +108,7 @@ if __name__ == '__main__':
     with open(output_path, 'w+') as output_file:
         output_file.write(output)
 
+    metadata = get_metadata(args.max_width, args.source_str)
     metadata_path = os.path.splitext(output_path)[0] + '.metadata'
     with open(metadata_path, 'w+') as metadata_file:
-        metadata_file.write('')
+        metadata_file.write(metadata)
