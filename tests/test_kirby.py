@@ -11,18 +11,28 @@ class KirbyTestCase(unittest.TestCase):
     _image_path = os.path.join(_tests_dir, 'kirby.png')
 
     _output_path = os.path.join(_tests_dir, 'test-kirby.txt')
+    _metadata_path = os.path.join(_tests_dir, 'test-kirby.metadata')
 
     def setUp(self):
         assert not os.path.exists(self._output_path)
+        assert not os.path.exists(self._metadata_path)
 
     def tearDown(self):
-        assert os.path.exists(self._output_path)
+        assert os.path.isfile(self._output_path)
+        assert os.path.isfile(self._metadata_path)
+
         os.remove(self._output_path)
         assert not os.path.exists(self._output_path)
+
+        os.remove(self._metadata_path)
+        assert not os.path.exists(self._metadata_path)
 
     def test_kirby(self):
         saved_output_path = os.path.join(self._tests_dir, 'kirby.txt')
         assert os.path.isfile(saved_output_path)
+
+        saved_metadata_path = os.path.join(self._tests_dir, 'kirby.metadata')
+        assert os.path.isfile(saved_metadata_path)
 
         subprocess.check_call(
             ('python3', 'ascii_art.py',
@@ -40,9 +50,22 @@ class KirbyTestCase(unittest.TestCase):
 
         self.assertEqual(output, saved_output)
 
+        with open(self._metadata_path, 'rb') as metadata_file:
+            metadata = metadata_file.read()
+
+        with open(saved_metadata_path, 'rb') as saved_metadata_file:
+            saved_metadata = saved_metadata_file.read()
+
+        self.assertEqual(metadata, saved_metadata)
+
     def test_minimal_kirby(self):
         saved_output_path = os.path.join(self._tests_dir, 'minimal-kirby.txt')
         assert os.path.isfile(saved_output_path)
+
+        saved_metadata_path = os.path.join(
+            self._tests_dir, 'minimal-kirby.metadata'
+        )
+        assert os.path.isfile(saved_metadata_path)
 
         subprocess.check_call(
             ('python3', 'ascii_art.py',
@@ -59,3 +82,11 @@ class KirbyTestCase(unittest.TestCase):
             saved_output = saved_output_file.read()
 
         self.assertEqual(output, saved_output)
+
+        with open(self._metadata_path, 'rb') as metadata_file:
+            metadata = metadata_file.read()
+
+        with open(saved_metadata_path, 'rb') as saved_metadata_file:
+            saved_metadata = saved_metadata_file.read()
+
+        self.assertEqual(metadata, saved_metadata)

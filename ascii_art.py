@@ -103,3 +103,7 @@ if __name__ == '__main__':
 
     with open(output_path, 'w+') as output_file:
         output_file.write(output)
+
+    metadata_path = os.path.splitext(output_path)[0] + '.metadata'
+    with open(metadata_path, 'w+') as metadata_file:
+        metadata_file.write('')
